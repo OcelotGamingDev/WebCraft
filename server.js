@@ -117,7 +117,7 @@ server.on( "join", function( client, nickname )
 {
 	server.sendMessage( "Welcome! Enjoy your stay, " + nickname + "!", client );
 	server.broadcastMessage( nickname + " joined the game.", client );
-	// Playing message
+	dClient.channels.get(dConfig.dChanID).send(nickname + " joined the game.");
 	dClient.user.setActivity("Crafting with " + server.usedSlots + " player" + (server.usedSlots == 1 ? "" : "s"), { type: 'PLAYING' });
 } );
 
@@ -125,7 +125,7 @@ server.on( "join", function( client, nickname )
 server.on( "leave", function( nickname )
 {
 	server.sendMessage( nickname + " left the game." );
-	// Playing message
+	dClient.channels.get(dConfig.dChanID).send(nickname + " left the game.");
 	dClient.user.setActivity("Crafting with " + server.usedSlots + " player" + (server.usedSlots == 1 ? "" : "s"), { type: 'PLAYING' });
 } );
 
