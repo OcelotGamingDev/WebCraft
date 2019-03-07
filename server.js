@@ -5,13 +5,18 @@
 // WebCraft server on the Node.js platform.
 // ==========================================
 
+// Discord variables.
+const Discord = require("discord.js");
+const dClient = new Discord.Client();
+const dConfig = require("./config.json");
+
 // Parameters
 var WORLD_SX = 128;
 var WORLD_SY = 128;
 var WORLD_SZ = 32;
 var WORLD_GROUNDHEIGHT = 16;
 var SECONDS_BETWEEN_SAVES = 60;
-var ADMIN_IP = "";
+var ADMIN_IP = dConfig.mAdminIP;
 
 // Load modules
 var modules = {};
@@ -26,6 +31,23 @@ var log = require( "util" ).log;
 // Set-up evil globals
 global.Vector = modules.helpers.Vector;
 global.BLOCK = modules.blocks.BLOCK;
+
+dClient.on("message", async message => {
+	if (message.author.bot) return; // No bots (no repeating messages)!
+
+	// Getting the username of the message author.
+	user = message.member;
+	user = user.toString();
+	if (user.includes("!")) {
+		user = user.split("!")[1].split(">")[0];
+	} else {
+		user = user.split("@")[1].split(">")[0];
+	}
+	
+	// Send a message. Format - "Username: Message"
+	// Example: "OcelotGaming: Hello!"
+	server.sendMessage(dClient.users.get(user).username + ": " + message.content);
+});
 
 // Create new empty world or load one from file
 var world = new modules.world.World( WORLD_SX, WORLD_SY, WORLD_SZ );
@@ -48,6 +70,9 @@ log( "Waiting for clients..." );
 // Chat commands
 server.on( "chat", function( client, nickname, msg )
 {
+	// Send the message to discord, with the format "Nickname: Message"
+	// Example - "Ocelot: hi"
+	dClient.channels.get(dConfig.dChanID).send(nickname + ": " + msg);
 	if ( msg == "/spawn" ) {
 		server.setPos( client, world.spawnPoint.x, world.spawnPoint.y, world.spawnPoint.z );
 		return true;
@@ -68,7 +93,7 @@ server.on( "chat", function( client, nickname, msg )
 		target = server.findPlayerByName( target );
 		
 		if ( target != null ) {
-				server.kick( target.socket, "Kicked by Overv" );
+				server.kick( target.socket, "Kicked by an administrator" );
 				return true;
 		} else {
 			server.sendMessage( "Couldn't find that player!", client );
@@ -106,3 +131,5 @@ setInterval( function()
 	world.saveToFile( "world" );
 	log( "Saved world to file." );
 }, SECONDS_BETWEEN_SAVES * 1000 );
+
+dClient.login(dConfig.dToken);
