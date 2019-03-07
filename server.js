@@ -117,12 +117,16 @@ server.on( "join", function( client, nickname )
 {
 	server.sendMessage( "Welcome! Enjoy your stay, " + nickname + "!", client );
 	server.broadcastMessage( nickname + " joined the game.", client );
+	// Playing message
+	dClient.user.setActivity("Crafting with " + server.usedSlots + " player" + (server.usedSlots == 1 ? "" : "s"), { type: 'PLAYING' });
 } );
 
 // And let players know of a disconnecting user
 server.on( "leave", function( nickname )
 {
 	server.sendMessage( nickname + " left the game." );
+	// Playing message
+	dClient.user.setActivity("Crafting with " + server.usedSlots + " player" + (server.usedSlots == 1 ? "" : "s"), { type: 'PLAYING' });
 } );
 
 // Periodical saves
