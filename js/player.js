@@ -139,7 +139,7 @@ Player.prototype.onMouseEvent = function( x, y, type, rmb )
 		this.dragging = false;
 		this.mouseDown = false;
 		this.canvas.style.cursor = "default";
-	} else if ( type == MOUSE.MOVE && this.mouseDown ) {
+	} else if ( type == MOUSE.MOVE && this.mouseDown || type == MOUSE.MOVE && this.keys["q"] ) {
 		this.dragging = true;
 		this.targetPitch = this.pitchStart - ( y - this.dragStart.y ) / 200;
 		this.targetYaw = this.yawStart + ( x - this.dragStart.x ) / 200;
